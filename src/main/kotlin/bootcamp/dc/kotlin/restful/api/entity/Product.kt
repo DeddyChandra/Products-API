@@ -9,7 +9,7 @@ import javax.persistence.Table
 @Entity
 @Table(name = "products")
 data class Product (
-    
+
     @Id
     val id: String,
 
@@ -23,9 +23,9 @@ data class Product (
     val quantity: Int,
 
     @Column(name = "created_at")
-    val created_at: Date,
+    val createdAt: Date,
 
     @Column(name = "updated_at")
-    val updated_at: Date,
+    val updatedAt: Date?,
 
 )

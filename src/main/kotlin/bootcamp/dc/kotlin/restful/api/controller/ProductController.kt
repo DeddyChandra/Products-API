@@ -6,6 +6,7 @@ import bootcamp.dc.kotlin.restful.api.model.UpdateProductRequest
 import bootcamp.dc.kotlin.restful.api.model.WebResponse
 import bootcamp.dc.kotlin.restful.api.service.ProductService
 import org.springframework.web.bind.annotation.*
+import java.util.WeakHashMap
 
 @RestController
 class ProductController(val productService: ProductService) {
@@ -48,6 +49,20 @@ class ProductController(val productService: ProductService) {
     fun updateProduct(@PathVariable("id_product") id: String,
                       @RequestBody updateProductRequest: UpdateProductRequest) : WebResponse<ProductResponse>{
         val productResponse = productService.update(id, updateProductRequest)
+        return WebResponse(
+            code = 200,
+            status = "OK",
+            data = productResponse
+        )
+    }
+
+    @DeleteMapping(
+        value = ["api/products/{id_product}"],
+        produces = ["application/json"]
+    )
+    fun deleteProduct(@PathVariable("id_product") id: String) : WebResponse<ProductResponse>{
+        val productResponse = productService.delete(id)
+
         return WebResponse(
             code = 200,
             status = "OK",

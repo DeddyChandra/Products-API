@@ -3,14 +3,17 @@ package bootcamp.dc.kotlin.restful.api.service.impl
 import bootcamp.dc.kotlin.restful.api.entity.Product
 import bootcamp.dc.kotlin.restful.api.error.NotFoundException
 import bootcamp.dc.kotlin.restful.api.model.CreateProductRequest
+import bootcamp.dc.kotlin.restful.api.model.ListProductRequest
 import bootcamp.dc.kotlin.restful.api.model.ProductResponse
 import bootcamp.dc.kotlin.restful.api.model.UpdateProductRequest
 import bootcamp.dc.kotlin.restful.api.repository.ProductRepository
 import bootcamp.dc.kotlin.restful.api.service.ProductService
 import bootcamp.dc.kotlin.restful.api.validation.ValidationUtil
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
+import java.util.stream.Collectors
 
 @Service
 //dependency injection ProductRepository, validationUtil and implements ProductService
@@ -61,6 +64,13 @@ class ProductServiceImpl(
         productRepository.deleteById(product.id)
 
         return convertProductToProductResponse(product)
+    }
+
+    override fun list(listProductRequest: ListProductRequest): List<ProductResponse> {
+        val page = productRepository.findAll(PageRequest.of(listProductRequest.page, listProductRequest.size))
+        val products: List<Product> = page.get().collect(Collectors.toList())
+
+        return products.map{ convertProductToProductResponse(it) }
     }
 
     private fun findProductByIdOrThrowNotFound(id: String): Product {

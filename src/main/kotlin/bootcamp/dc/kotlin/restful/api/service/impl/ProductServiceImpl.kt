@@ -4,6 +4,7 @@ import bootcamp.dc.kotlin.restful.api.entity.Product
 import bootcamp.dc.kotlin.restful.api.error.NotFoundException
 import bootcamp.dc.kotlin.restful.api.model.CreateProductRequest
 import bootcamp.dc.kotlin.restful.api.model.ProductResponse
+import bootcamp.dc.kotlin.restful.api.model.UpdateProductRequest
 import bootcamp.dc.kotlin.restful.api.repository.ProductRepository
 import bootcamp.dc.kotlin.restful.api.service.ProductService
 import bootcamp.dc.kotlin.restful.api.validation.ValidationUtil
@@ -32,7 +33,7 @@ class ProductServiceImpl(
             updatedAt = null,
         )
         productRepository.save(product);
-        return this.converProductToProductResponse(product)
+        return this.convertProductToProductResponse(product)
     }
 
     override fun get(id: String): ProductResponse {
@@ -40,11 +41,30 @@ class ProductServiceImpl(
         if (product == null) {
             throw NotFoundException()
         } else {
-            return this.converProductToProductResponse(product)
+            return this.convertProductToProductResponse(product)
         }
     }
 
-    private fun converProductToProductResponse(product: Product): ProductResponse {
+    override fun update(id: String, updateProductRequest: UpdateProductRequest): ProductResponse {
+        val product = productRepository.findByIdOrNull(id)
+         if(product == null){
+            throw NotFoundException()
+        }
+
+        validationUtil.validate(updateProductRequest)
+        product.apply {
+            name = updateProductRequest.name!!
+            price = updateProductRequest.price!!
+            quantity = updateProductRequest.quantity!!
+            updatedAt = Date()
+        }
+        productRepository.save(product)
+
+        return convertProductToProductResponse(product)
+    }
+
+
+    private fun convertProductToProductResponse(product: Product): ProductResponse {
         return ProductResponse(
             id = product.id,
             name = product.name,

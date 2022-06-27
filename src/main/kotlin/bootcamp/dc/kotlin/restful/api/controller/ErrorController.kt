@@ -1,6 +1,7 @@
 package bootcamp.dc.kotlin.restful.api.controller
 
 import bootcamp.dc.kotlin.restful.api.error.NotFoundException
+import bootcamp.dc.kotlin.restful.api.error.UnauthorizedException
 import bootcamp.dc.kotlin.restful.api.model.WebResponse
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -23,6 +24,15 @@ class ErrorController {
             code = 404,
             status = "Item Not Found!",
             data = "Item Not Found!!! "
+        )
+    }
+
+    @ExceptionHandler(value = [UnauthorizedException::class])
+    fun unauthorized(unauthorizedException: UnauthorizedException): WebResponse<String> {
+        return WebResponse(
+            code = 401,
+            status = "Unauthorized",
+            data = "Please insert your X-Api-Key"
         )
     }
 }
